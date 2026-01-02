@@ -5,5 +5,12 @@
     "loan": 0,
     "loanDeadline": null,
     "loanPaid": false
+  },
+  "1323997870877179965": {
+    "balance": 5000,
+    "lastInterestTime": 1767375943358,
+    "loan": 0,
+    "loanDeadline": null,
+    "loanPaid": false
   }
 }

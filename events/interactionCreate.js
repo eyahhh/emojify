@@ -1,6 +1,7 @@
 const { getGiveaway, updateGiveaway, pickWinners } = require('../functions/giveaways');
 const { addCoins } = require('../database/coins');
 const botconfigHandler = require('../functions/botconfigHandler');
+const apoiadoresHandler = require('../functions/apoiadoresHandler');
 
 module.exports = {
     name: "interactionCreate",
@@ -8,6 +9,11 @@ module.exports = {
         // Handle botconfig modals
         if (interaction.isModalSubmit() && interaction.customId.startsWith("botconfig_modal_")) {
             return botconfigHandler.handleBotconfigModal(interaction);
+        }
+
+        // Handle apoiadores selects
+        if (interaction.isUserSelectMenu() && interaction.customId.startsWith("apoiadores_")) {
+            return apoiadoresHandler.handleApoiadoresSelect(interaction);
         }
 
         if (!interaction.isButton()) return;
@@ -18,6 +24,11 @@ module.exports = {
         // Handle botconfig buttons (sem defer, pois usam showModal)
         if (action === "botconfig") {
             return botconfigHandler.handleBotconfigButton(interaction);
+        }
+
+        // Handle apoiadores buttons
+        if (action === "apoiadores") {
+            return apoiadoresHandler.handleApoiadoresButton(interaction);
         }
 
         // Ignore outros tipos de botões que não são sorteios

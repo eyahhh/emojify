@@ -115,8 +115,8 @@ function applyInterest(userId) {
     const hoursPassed = (now - lastInterest) / (1000 * 60 * 60);
 
     if (hoursPassed >= 1) {
-        // 0.1% de juros por hora
-        const interest = Math.floor(bank[userId].balance * 0.001);
+        // 0.7% de juros por hora
+        const interest = Math.floor(bank[userId].balance * 0.007);
         bank[userId].balance += interest;
         bank[userId].lastInterestTime = now;
         saveBank(bank);

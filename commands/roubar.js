@@ -7,7 +7,7 @@ const { getCoins, removeCoins, addCoins, ensureUser } = require("../database/coi
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("roubar")
-        .setDescription("🏴‍☠️ Tentar roubar coins de um usuário (risco: 2% de falha)")
+        .setDescription("🏴‍☠️ Tentar roubar coins de um usuário (risco: 72% de falha)")
         .addUserOption((option) =>
             option
                 .setName("usuario")
@@ -41,7 +41,7 @@ module.exports = {
         const robberCoins = getCoins(interaction.user.id);
         const victimCoins = getCoins(targetUser.id);
 
-        // Verifica se a vítima tem coins
+        // Verifica se a vítima tem coins (apenas o saldo normal, não o banco)
         if (victimCoins <= 0) {
             return interaction.reply({
                 content: `❌ **${targetUser.username}** não tem coins para roubar!`,
@@ -73,9 +73,9 @@ module.exports = {
             return interaction.reply({ embeds: [embed], flags: 64 });
         }
 
-        // Sucesso! Rouba 1-1000 coins
+        // Sucesso! Rouba 1-1000 coins (apenas do saldo normal, não do banco)
         const stolenAmount = Math.floor(Math.random() * 1000) + 1;
-        const amountToSteal = Math.min(stolenAmount, victimCoins); // Não rouba mais do que a vítima tem
+        const amountToSteal = Math.min(stolenAmount, victimCoins); // Não rouba mais do que a vítima tem em mão
 
         removeCoins(targetUser.id, amountToSteal);
         addCoins(interaction.user.id, amountToSteal);
@@ -94,3 +94,4 @@ module.exports = {
         await interaction.reply({ embeds: [embed], flags: 64 });
     },
 };
+

@@ -28,7 +28,7 @@ module.exports = {
             .addFields(
                 { name: "💰 Saldo no Banco", value: `**${bankBalance}** 💰`, inline: true },
                 { name: "📊 Empréstimo Ativo", value: loan > 0 ? `**${loan}** 💰` : "Nenhum", inline: true },
-                { name: "⏰ Juros por Hora", value: "0.1% do seu saldo", inline: false }
+                { name: "⏰ Juros por Hora", value: "0.7% do seu saldo", inline: false }
             )
             .setThumbnail(user.displayAvatarURL({ size: 256 }))
             .setFooter({ text: "Use /depositar para adicionar dinheiro" });
