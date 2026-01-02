@@ -1,0 +1,80 @@
+const {
+    SlashCommandBuilder,
+    EmbedBuilder,
+    PermissionFlagsBits,
+} = require("discord.js");
+const fs = require("fs");
+const path = require("path");
+
+module.exports = {
+    data: new SlashCommandBuilder()
+        .setName("leaderboardglobal")
+        .setDescription("🌍 Ver o ranking global de coins")
+        .addNumberOption((option) =>
+            option
+                .setName("posicao")
+                .setDescription("Posição inicial (padrão: 1)")
+                .setMinValue(1)
+                .setRequired(false)
+        ),
+
+    async execute(interaction) {
+        const coinsFile = path.join(__dirname, "../database/coins.json");
+        
+        if (!fs.existsSync(coinsFile)) {
+            return interaction.reply({
+                content: "❌ Nenhum usuário encontrado!",
+                flags: 64,
+            });
+        }
+
+        const coinsData = JSON.parse(fs.readFileSync(coinsFile, "utf8"));
+        const startPosition = interaction.options.getNumber("posicao") || 1;
+
+        // Ordena por quantidade de coins (decrescente)
+        const leaderboard = Object.entries(coinsData)
+            .map(([userId, coins]) => ({ userId, coins }))
+            .sort((a, b) => b.coins - a.coins);
+
+        if (leaderboard.length === 0) {
+            return interaction.reply({
+                content: "❌ Nenhum usuário encontrado!",
+                flags: 64,
+            });
+        }
+
+        // Pega top 10 a partir da posição
+        const topUsers = leaderboard.slice(startPosition - 1, startPosition + 9);
+
+        if (topUsers.length === 0) {
+            return interaction.reply({
+                content: `❌ Posição ${startPosition} não existe!`,
+                flags: 64,
+            });
+        }
+
+        let description = "";
+        for (let i = 0; i < topUsers.length; i++) {
+            const position = startPosition + i;
+            const user = topUsers[i];
+            const medal = position === 1 ? "🥇" : position === 2 ? "🥈" : position === 3 ? "🥉" : "   ";
+
+            try {
+                const userData = await interaction.client.users.fetch(user.userId);
+                description += `${medal} **#${position}** - ${userData.username}: **${user.coins}** 💰\n`;
+            } catch {
+                description += `${medal} **#${position}** - <@${user.userId}>: **${user.coins}** 💰\n`;
+            }
+        }
+
+        const embed = new EmbedBuilder()
+            .setTitle("🌍 Ranking Global de Coins")
+            .setDescription(description)
+            .setColor("Gold")
+            .setFooter({
+                text: `Mostrando posições ${startPosition} a ${startPosition + topUsers.length - 1} de ${leaderboard.length}`,
+            });
+
+        await interaction.reply({ embeds: [embed], flags: 64 });
+    },
+};
